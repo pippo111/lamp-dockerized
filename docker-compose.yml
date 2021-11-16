@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: mysql-server
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: MY_DATABASE
+      MYSQL_USER: MYSQL_USER
+      MYSQL_PASSWORD: MYSQL_PASSWORD
+    ports:
+      - "9906:3306"
+  www:
+    depends_on:
+    - db
+    container_name: web-server
+    build:
+      dockerfile: php.Dockerfile
+      context: .
+    volumes:
+      - ./www:/var/www/html
+    ports:
+      - "8000:80"
+  phpmyadmin:
+    depends_on:
+      - db
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+    ports:
+      - "8100:80"
